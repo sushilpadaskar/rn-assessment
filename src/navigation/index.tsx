@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ProductsScreen from "../screens/ProductsScreen";
 import CartScreen from "../screens/CartScreen";
 import UsersScreen from "../screens/UsersScreen";
-import UserDetailsScreen from "../screens/UserDetailsScreen";
+import UserDetailsScreen from "../screens/UsersDetailsScreen";
 import TokenScreen from "../screens/TokenScreen";
 
 const Stack = createNativeStackNavigator();
