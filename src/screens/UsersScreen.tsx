@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
 import { useNavigation } from "@react-navigation/native";
+import { saveData, loadData } from "../storage/asyncStorage";
 
 type User = {
   id: number;
@@ -20,11 +20,11 @@ export default function UsersScreen() {
         const res = await fetch("https://jsonplaceholder.typicode.com/users");
         const data = await res.json();
         setUsers(data);
-        await AsyncStorage.setItem("users", JSON.stringify(data));
-      } else {
-        const cached = await AsyncStorage.getItem("users");
-        if (cached) setUsers(JSON.parse(cached));
-      }
+        await saveData("users", data); 
+        } else {
+            const cached = await loadData("users"); 
+            if (cached) setUsers(cached);
+        }
     };
 
     fetchUsers();
@@ -32,7 +32,6 @@ export default function UsersScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Users</Text>
       <FlatList
         data={users}
         keyExtractor={(item) => item.id.toString()}

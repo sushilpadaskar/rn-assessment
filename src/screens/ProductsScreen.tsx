@@ -41,7 +41,7 @@ export default function ProductsScreen() {
   const renderItem = ({ item }: { item: Product }) => (
     <View style={styles.item}>
       <Text>
-        {item.name} - ${item.price}
+        {item.name} - Rs {item.price}
       </Text>
       <TouchableOpacity style={styles.button} onPress={() => addToCart(item)}>
         <Text style={styles.buttonText}>Add to Cart</Text>

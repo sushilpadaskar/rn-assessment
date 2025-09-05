@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
-import * as SecureStore from "expo-secure-store";
+import { saveSecureData, loadSecureData } from "../storage/secureStorage";
 
 const TOKEN_KEY = "authToken";
 
@@ -8,14 +8,14 @@ export default function TokenScreen() {
   const [token, setToken] = useState<string | null>(null);
 
   const saveToken = async () => {
-    await SecureStore.setItemAsync(TOKEN_KEY, "dummy-auth-token-123");
+    await saveSecureData(TOKEN_KEY, "dummy-auth-token-123");
     loadToken();
-  };
+    };
 
   const loadToken = async () => {
-    const saved = await SecureStore.getItemAsync(TOKEN_KEY);
+    const saved = await loadSecureData(TOKEN_KEY);
     setToken(saved);
-  };
+    };
 
   useEffect(() => {
     loadToken();
