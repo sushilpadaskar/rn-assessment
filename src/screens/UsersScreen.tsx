@@ -11,24 +11,31 @@ type User = {
 
 export default function UsersScreen() {
   const [users, setUsers] = useState<User[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation<any>();
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const state = await NetInfo.fetch();
-      if (state.isConnected) {
-        const res = await fetch("https://jsonplaceholder.typicode.com/users");
-        const data = await res.json();
-        setUsers(data);
-        await saveData("users", data); 
-        } else {
-            const cached = await loadData("users"); 
-            if (cached) setUsers(cached);
-        }
-    };
+  const fetchUsers = async () => {
+    const state = await NetInfo.fetch();
+    if (state.isConnected) {
+      const res = await fetch("https://jsonplaceholder.typicode.com/users");
+      const data = await res.json();
+      setUsers(data);
+      await saveData("users", data);
+    } else {
+      const cached = await loadData("users");
+      if (cached) setUsers(cached);
+    }
+  };
 
+  useEffect(() => {
     fetchUsers();
   }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchUsers();
+    setRefreshing(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -43,6 +50,8 @@ export default function UsersScreen() {
             <Text>{item.name}</Text>
           </TouchableOpacity>
         )}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
       />
     </View>
   );

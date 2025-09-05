@@ -8,6 +8,7 @@ import CartScreen from "../screens/CartScreen";
 import UsersScreen from "../screens/UsersScreen";
 import UserDetailsScreen from "../screens/UsersDetailsScreen";
 import TokenScreen from "../screens/TokenScreen";
+import DeviceInfoScreen from "../screens/DeviceInfoScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -19,6 +20,7 @@ function TabsNavigator() {
       <Tab.Screen name="Cart" component={CartScreen} />
       <Tab.Screen name="Users" component={UsersScreen} />
       <Tab.Screen name="Token" component={TokenScreen} />
+      <Tab.Screen name="DeviceInfo" component={DeviceInfoScreen} />
     </Tab.Navigator>
   );
 }
