@@ -1,33 +1,67 @@
-import React from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { useCartStore, Product } from "../store/cartStore";
-
-const PRODUCTS: Product[] = Array.from({ length: 20 }).map((_, i) => ({
-  id: i + 1,
-  name: `Product ${i + 1}`,
-  price: Math.floor(Math.random() * 100) + 1,
-}));
 
 export default function ProductsScreen() {
   const addToCart = useCartStore((state) => state.addToCart);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  const generateProducts = (start: number, count: number): Product[] => {
+    return Array.from({ length: count }).map((_, i) => ({
+      id: start + i,
+      name: `Product ${start + i}`,
+      price: Math.floor(Math.random() * 100) + 1,
+    }));
+  };
+
+  const loadMore = () => {
+    if (loading) return;
+    setLoading(true);
+    setTimeout(() => {
+      const newProducts = generateProducts((page - 1) * 100 + 1, 100);
+      setProducts((prev) => [...prev, ...newProducts]);
+      setPage((prev) => prev + 1);
+      setLoading(false);
+    }, 500);
+  };
+
+  useEffect(() => {
+    loadMore();
+  }, []);
+
+  const renderItem = ({ item }: { item: Product }) => (
+    <View style={styles.item}>
+      <Text>
+        {item.name} - ${item.price}
+      </Text>
+      <TouchableOpacity style={styles.button} onPress={() => addToCart(item)}>
+        <Text style={styles.buttonText}>Add to Cart</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Products</Text>
       <FlatList
-        data={PRODUCTS}
+        data={products}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text>{item.name} - ${item.price}</Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => addToCart(item)}
-            >
-              <Text style={styles.buttonText}>Add to Cart</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        renderItem={renderItem}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={loading ? <ActivityIndicator size="large" /> : null}
+        initialNumToRender={20}
+        maxToRenderPerBatch={50}
+        windowSize={10}
+        removeClippedSubviews
       />
     </View>
   );
